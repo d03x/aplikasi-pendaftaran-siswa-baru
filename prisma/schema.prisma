@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:@localhost:3306/db_ppdb_dev"
+}
+
+//alamat
+model provinces {
+  id Int @id @default(autoincrement())
+}
+
+model districts {
+  id Int @id @default(autoincrement())
+}
+
+model subDistricts {
+  id Int @id @default(autoincrement())
+}
+
+model vilages {
+  id Int @id @default(autoincrement())
+}
+
+//jalur pendaftaran
+model path {
+  id            Int             @id @default(autoincrement())
+  name          String
+  active        Boolean         @default(false)
+  registrations registrations[]
+  updatedAt     DateTime        @updatedAt
+  createdAt     DateTime        @default(now())
+}
+
+//registerasi
+model registrations {
+  id               Int                 @id @default(autoincrement())
+  pathId           Int
+  registrationType registration_types  @default(NEW)
+  number           String              @unique
+  status           registration_status @default(PENDING)
+  path             path                @relation(fields: [pathId], references: [id])
+  userId           Int
+  user             users               @relation(fields: [userId], references: [id])
+  updatedAt        DateTime            @updatedAt
+  createdAt        DateTime            @default(now())
+}
+
+model documentTypes {
+  id        Int         @id @default(autoincrement())
+  name      String?     @unique
+  pathIds   Json
+  documents documents[]
+  updatedAt DateTime    @updatedAt
+  createdAt DateTime    @default(now())
+}
+
+model documents {
+  id             Int           @id @default(autoincrement())
+  studentId      Int
+  student        students      @relation(fields: [studentId], references: [id])
+  filename       String
+  fileExtension  String
+  fileSize       String
+  documentTypeId Int
+  fileUrl        String
+  document       documentTypes @relation(fields: [documentTypeId], references: [id])
+  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime      @default(now())
+}
+
+model students {
+  id           Int         @id @default(autoincrement())
+  religion     String?
+  nisn         String      @unique
+  nik          String      @unique
+  address      String?
+  placeOfBirth String?
+  dateOfBirth  DateTime?
+  users        users[]
+  documents    documents[]
+  updatedAt    DateTime    @updatedAt
+  createdAt    DateTime    @default(now())
+}
+
+model schoolOrigins {
+  id      Int    @id @default(autoincrement())
+  name    String
+  npsn    String
+  address String
+}
+
+model parents {
+  id Int @id @default(autoincrement())
+}
+
+model users {
+  id              Int             @id @default(autoincrement())
+  name            String?
+  email           String          @unique
+  password        String
+  active          Boolean         @default(false)
+  role            user_role       @default(STUDENT)
+  phoneNumber     String?
+  avatar          String?         @default("default.png")
+  gender          user_gender     @default(M)
+  emailVerifiedAt DateTime?
+  createdAt       DateTime?       @default(now())
+  updatedAt       DateTime
+  studentId       Int
+  student         students        @relation(fields: [studentId], references: [id], map: "User_studentId_fkey")
+  registrations   registrations[]
+
+  @@index([studentId], map: "User_studentId_fkey")
+}
+
+enum registration_status {
+  ACCEPTED
+  REJECTED
+  PENDING
+}
+
+enum user_role {
+  STUDENT
+  ADMIN
+  COMMITTEE
+}
+
+enum user_gender {
+  M
+  F
+}
+
+enum registration_types {
+  NEW
+  TRANSFER
+}

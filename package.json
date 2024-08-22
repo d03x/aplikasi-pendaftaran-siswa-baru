@@ -1,0 +1,29 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "prisma": {
+    "seed": "npx tsx prisma\\seed.ts"
+  },
+  "scripts": {
+    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "npx prisma db seed",
+    "build": "nuxt build",
+    "dev": "nuxt dev --host",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxt/ui": "^2.17.0",
+    "@prisma/client": "^5.18.0",
+    "nuxt": "^3.12.4",
+    "prisma": "^5.18.0"
+  },
+  "dependencies": {
+    "@nuxt/telemetry": "^2.5.4",
+    "@nuxthub/core": "^0.7.3",
+    "@prisma/nuxt": "^0.0.35"
+  }
+}
