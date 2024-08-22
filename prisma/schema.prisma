@@ -10,10 +10,17 @@ datasource db {
 //alamat
 model provinces {
   id Int @id @default(autoincrement())
+  name String
+  code String
+  districts districts[]
+
 }
 
 model districts {
   id Int @id @default(autoincrement())
+  provinceId Int
+  name String
+  province provinces @relation(fields: [provinceId],references: [id])
 }
 
 model subDistricts {
